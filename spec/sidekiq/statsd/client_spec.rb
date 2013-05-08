@@ -3,7 +3,7 @@ require "statsd"
 
 describe Sidekiq::Statsd::Client do
   let(:worker_name)   { "ImageWorker" }
-  let(:statsd_client) { double "StatsD Client" }
+  let(:statsd_client) { double "Statsd Client" }
 
   before { ::Statsd.stub new: statsd_client }
 
@@ -18,7 +18,7 @@ describe Sidekiq::Statsd::Client do
     subject(:statsd) { described_class.new options }
 
     describe "#initialize" do
-      it "initializes StatsD client" do
+      it "initializes Statsd client" do
         ::Statsd.should_receive(:new).with options["host"], options["port"]
         statsd
       end

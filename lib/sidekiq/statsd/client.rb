@@ -29,7 +29,7 @@ module Sidekiq
       #
       # @param key [String] The key to be incremented.
       def increment key
-        # @statsd_client.increment [@options["env"], @options["prefix"], key].join(".")
+        @statsd_client.increment [@options["env"], @options["prefix"], key].join(".")
       end
     end
   end

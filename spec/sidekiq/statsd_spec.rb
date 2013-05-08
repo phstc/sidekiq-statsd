@@ -6,10 +6,15 @@ describe Sidekiq::Statsd do
   let(:worker) { double "Dummy worker" }
   let(:msg)    { nil }
   let(:queue)  { nil }
+  let(:client) { double "Statsd client" }
+
+  before do
+    Sidekiq::Statsd::Client.stub new: client
+  end
 
   describe "#call" do
     it "increments success" do
-      Sidekiq::Statsd::Client.any_instance.
+      client.
         should_receive(:increment).
         with "#{worker.class.name}.success"
 
@@ -17,8 +22,8 @@ describe Sidekiq::Statsd do
     end
 
     it "increments failure" do
-      Sidekiq::Statsd::Client.any_instance.
-        should_receive(:increment).
+      client.
+        stub(:increment).
         with "#{worker.class.name}.failure"
 
       b = ->{ raise "error" }
