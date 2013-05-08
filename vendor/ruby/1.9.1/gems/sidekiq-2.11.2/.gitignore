@@ -1,0 +1,9 @@
+.rvmrc
+.ruby-version
+tags
+Gemfile.lock
+*.swp
+dump.rdb
+.rbx
+coverage/
+.sass-cache/

@@ -1,52 +1,29 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Sidekiq::Throttler do
+  subject(:throttler) { described_class.new }
 
-  subject(:throttler) do
-    described_class.new
-  end
+  let(:worker) { double "Dummy worker" }
+  let(:msg)    { nil }
+  let(:queue)  { nil }
 
-  let(:worker) do
-    LolzWorker.new
-  end
+  describe "#call" do
+    it "increments success" do
+      Sidekiq::Throttler::Statsd.any_instance.
+        should_receive(:increment).
+        with "#{worker.class.name}.success"
 
-  let(:message) do
-    {
-      args: 'Clint Eastwood'
-    }
-  end
-
-  let(:queue) do
-    'default'
-  end
-
-  describe '#call' do
-
-    it 'instantiates a rate limit with the worker, args, and queue' do
-      rate_limit = Sidekiq::Throttler::RateLimit.new(worker, message['args'], queue)
-      Sidekiq::Throttler::RateLimit.should_receive(:new).with(
-        worker, message['args'], queue
-      ).and_return(rate_limit)
-
-      throttler.call(worker, message, queue) {}
+      throttler.call(worker, msg, queue) {}
     end
 
-    it 'yields in RateLimit#within_bounds' do
-      expect { |b| throttler.call(worker, message, queue, &b) }.to yield_with_no_args
-    end
+    it "increments failure" do
+      Sidekiq::Throttler::Statsd.any_instance.
+        should_receive(:increment).
+        with "#{worker.class.name}.failure"
 
-    it 'calls RateLimit#execute' do
-      Sidekiq::Throttler::RateLimit.any_instance.should_receive(:execute)
-      throttler.call(worker, message, queue)
-    end
+      b = ->{ raise "error" }
 
-    context 'when rate limit is exceeded' do
-
-      it 'requeues the job with a delay' do
-        Sidekiq::Throttler::RateLimit.any_instance.should_receive(:exceeded?).and_return(true)
-        worker.class.should_receive(:perform_in).with(1.minute, *message['args'])
-        throttler.call(worker, message, queue)
-      end
+      expect{ throttler.call worker, msg, queue, &b }.to raise_error
     end
   end
 end

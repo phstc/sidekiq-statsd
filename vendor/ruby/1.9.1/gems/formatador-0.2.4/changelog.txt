@@ -1,0 +1,13 @@
+v0.2.3 05/18/12
+===============
+
+* fix nested hashes to allow for keys which contain periods
+
+v0.2.2 05/16/12
+===============
+
+* require stringio in tests
+* allow tests to pass without tty
+* label test groups
+* fix for redisplay width
+* allow tables to use nested hashes

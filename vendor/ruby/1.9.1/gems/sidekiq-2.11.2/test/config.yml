@@ -1,0 +1,11 @@
+---
+:verbose:      false
+:environment:  xzibit
+:require:      ./test/fake_env.rb
+:pidfile:      /tmp/sidekiq-config-test.pid
+:logfile:      /tmp/sidekiq.log
+:namespace:    sidekiq
+:concurrency:  50
+:queues:
+  - [<%="very_"%>often, 2]
+  - [seldom, 1]

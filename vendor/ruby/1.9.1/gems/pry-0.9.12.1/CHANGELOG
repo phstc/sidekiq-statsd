@@ -1,0 +1,531 @@
+21/04/2012 version 0.9.12.1 HOTFIX
+* Fixes #890, workaround for jruby crash related to http://jira.codehaus.org/browse/JRUBY-7114
+* note this fix is just applied to the 0.9.12 tag, not master. However, master has
+	this fix applied too.
+
+12/02/2012 version 0.9.12
+Bug fixes:
+* Fix major bug where commands broke due to slop looking at ARGV
+	instead of command parameters (#828)
+* Fix bug where pager broke in some situations (#845)
+* Fix broken rendering of some docs (#795)
+* silence warnings during failed tab-completion attempts
+* fix broken prompt when prompt is colored (#822 / #823)
+* added reload-method alias for reload-code (for backwards compat)
+* Reopen Readline.output if it is not a tty (see 1538bc0990)
+
+Features:
+* added pry --gem (see 19bfc13aa)
+* show-source now works on commands created with create_command
+* add -m (method) -c (class) and -f (file) switches to 'whereami' command
+* show-source now falls back to superclass if can't find class code
+	(displays warning)
+* show-source/show-doc now indicate when -a option is available.
+
+20/01/2012 version 0.9.11.4
+* fixed pager bug (wouldn't render color codes in some circumstances)
+* added Pry.last_internal_error, useful for devs debugging commands
+
+17/01/2012 version 0.9.11.3
+* fix Pry.run_command
+* improve `ls` output
+* add :requires_gem => "jist" to 'gist' command (so deps can be installed
+	via install-command)
+* improve help for 'edit' command
+
+16/01/2012 version 0.9.11.2
+* minor bug fix for gist on windows, rescuing Jist::ClipboardError
+rather than letting the scary error spill out to users and potentially
+have them think the gist didnt post.
+
+16/01/2012 version 0.9.11.1
+* fixed minor bug in 'gist' command where i neglected to remove
+  a call to a non-existent method (no_arg) which was called when
+  `gist` is invoked with no parameters
+
+16/01/2013 version 0.9.11
+dependency changes:
+* upgrade the slop gem to version ~> 3.4
+* new optional dependency: Bond (you'll need to perform `gem install bond`). It enables autocompletion if you use Readline. Does not support work for Editline (more info: https://github.com/pry/pry/wiki/FAQ#wiki-readline). Big thanks to cldwalker.
+
+new features:
+* #738 basic Ruby 2.0 support
+* #732 JRuby 1.7.0+ support
+* new reload-code command, using it you can reload code for methods,
+	classes, commands, objects and so on. e.g reload-code MyCLass,
+	reload-code my_method, reload-code my_obj
+* added bond tabcompletion, much more powerful than standard tab
+	completion. However, it requires a real 'readline' to work,
+	so will not work on standard osx setup (since it uses Editline)
+* show-source can now extract source for classes, methods, procs,
+	pry commands, and arbitrary objects (it shows the source for the class of
+	the object). As a result, show-command is now deprecated
+* gist/play/save-file now infer object type without requiring flags,
+	e.g play MyClass, play my_file.rb, play my_method
+* edit command can now edit most things, including: files, methods,
+	classes, commands. As a result the 'edit-method' command is now
+	deprecatd.
+	e.g edit my_file.rb, edit my_method, edit MyClass
+* removed "edit-method", now merged with 'edit'
+* amend-line and play now properly indent code added to input buffer.
+* #674 added support for require switches chaining (`pry -rubygems -r./a.rb`)
+* #695 added ability to customize the name displayed in the prompt
+* #716 added `--patch` switch for `edit --ex` command
+* #736 respect the `$PAGER` environment variable
+* #497 added `disable-pry` command
+* removed "show-command" command; use "show-source" command instead
+* exec switch chaining (`pry -e ':one' -e ':two'`)
+* added two new hooks: "before_eval" and "after_eval"
+* added tabcompletion for "show-source", "show-doc" commands and "Array#<tab>" cases
+* immediately require gems after gem-install
+* added `-l` switch for `ls` command (displays local variables)
+* added "gem-open" command
+* added "fix-indent" command
+* added subcommands API
+* exposed the test API for plugin writers (d1489a)
+* tablifed ls output
+* added `--no-line-numbers` switch for "whereami" command
+* added `--lines` switch for "play" command
+
+bug fixes:
+* #652 find-method uses single escape instead of double
+* #657 fixed blank string delimiters
+* #622 fixed "unwanted 'binding_impl_method' local now exists in scratch bindings"
+* #645 fixed "edit-method -p changes constant lookup"
+* #682 fixed ".pryrc" loading twice when invoked from `$HOME` directory
+* #675 fixed pry not remembering initial "pwd"
+* #717 fixed multiline object coloring
+* #719 fixed "show-method" not supporting `String::new` notation
+* #754 fixed "whereami" command not showing correct line numbers
+* #751 fixed buggy Cucumber AST output
+* #787 fixed `while/until do` loops indentation
+* #526 fixed buggy `--no-plugins` switch of pry
+* #774 ensure all errors go to the error handler
+* fixed ".pryrc" loading with wrong `__FILE__`
+* fixed bug when pager doesn't work if "less" is not available on system
+* fixed "Control-D" press in nested REPL
+* many small improvements of unclear error messages and formatting of documentation
+
+14/07/2012 version 0.9.10
+dependency changes:
+* #561 upgrade the slop gem to version 3
+* #590 move to the jist gem from gist.
+* upgrade method_source to 0.8
+
+new features:
+* #572 add --hist, -o and -k flags to gist command
+* #584 support show-source/doc on methods defined in class-eval
+* #585 support show-source/doc on gem methods defined in C
+* #596 add --disable-plugin and --select-plugin options
+* #597 allow "cd -" to switch between bindings
+* #612 add Pry.config.should_load_local_rc to turn off ./.pryrc
+* allow running a file of pry input with pry <file>
+* support colours in "ri" command
+* add before_eval hook
+* prompt now gets a lot more data when proc arity is 1
+
+bug fixes &c.
+* #554 removed the "req" command
+* #567 fix rendering bugs when starting pry
+* #568 fix Array#pretty_print on Jruby
+* #575 fix "edit" on windows
+* #576 fix "find-method" in the presence of badly behaved objects
+* #580 fix "whereami" in erb files on rails
+* #632 raise fewer exceptions while tab completing
+* #605 dont immediately quite pry when an error happens in readline
+* #606 support for ansicon to give jruby windows users colour
+* #613 massive speed improvements to show-source for modules
+* #620 improve whereami command when not in a binding.pry
+* #622 support embedded documents (=begin ... =end)
+* #627 support editing files with spaces in the name
+* changed __binding_impl__ to __pry__
+* support for absolute paths in $EDITOR
+* fix "cat" command on files with unknown extensions
+* many many internal refactorings and tidyings
+
+09/05/2012 version 0.9.9.6 fixes #558
+* #558 has been a thorn in our side for long enough, hopefully this properly fixes it
+(though im not too confident :P)
+
+09/05/2012 version 0.9.9.5 minor bugfix
+* fixed ZeroDivisionError in correct_indentation, bug #558
+* fix double highlighting in rdoc, bug #562
+* autocreate configuration for plugins, bug #548
+
+26/4/2012 version 0.9.9.4 major bugfix
+* fixed `NoMethodError: undefined method `winsize' for #<IO:<STDOUT>>`, bug #549
+* fixes for jruby
+* breakage on `exit` syntax error, fixes, #550
+* heredoc content no longer auto-indented
+
+19/4/2012 version 0.9.9.3 major doc bugfix
+* show-doc would fail on some core classes, i.e `show-doc Bignum`. This is now fixed
+and show allow a wider range of core documentation to be viewed directly in Pry.
+
+18/4/2012 version 0.9.9.2 minor bugfix
+* make correct_indentation's auto-colorization respect Pry.color
+
+18/4/2012 version 0.9.9.1 very minor release
+* cleared up confusion in show-source/show-doc docs that -a switch applies to classes
+as well as modules
+
+18/4/2012 version 0.9.9
+MAJOR NEW FEATURES
+* lines of input are syntax highlighted upon 'enter' keypress
+* show-source command can now show class/module sourcecode (use -a to see all monkeypatches). Hard dependency on ruby18_source_location gem in MRI 1.8
+* show-doc command can show class/module docs (use -a to see docs for all monkeypatches) Hard dependency on ruby18_source_location gem in MRI 1.8.
+* new `find-method` command, performs a recursive search in a namespace for the existence of methods. Can find methods whose names match a regex or methods which contain provided CODE! This command is like a ruby-aware 'grep', very cool (thanks swarley)
+* pry-coolline now works properly with Pry (https://github.com/pry/pry-coolline)
+* alias_command method now much more powerful, e.g: alias_command "lM", "ls -M"
+* `whereami` is now more intelligent, automatically showing entire sourcecode of current method if current context is a method (thanks robgleeson).
+* new `raise-up` command. Allows you to raise an exception that will bubble out of pry (ending the session) and escape into enclosing program.
+
+remaining items:
+* fixed windows crashing bug when paging
+* lines ending with \ are incomplete (kudos to fowl)
+* `edit-method -n` no longer blocks (thanks misfo)s
+* show instance methods of modules by default in ls
+* docs for REPL defined methods can now be displayed using show-doc
+* autoload ruby18_source_location on mri18, when available (https://github.com/conradirwin/ruby18_source_location)
+* tab completion should work on first line now (historic bug fixed)
+* :quiet => true option added to `Pry.start`, turns off whereami
+* another easter egg added
+* show unloaded constants in yellow for ls
+* improved documentation for Pry.config options
+* improved auto indentation
+* JRuby: heuristics used to clean up 'ls' output (less internal methods polluting output)
+
+6/3/2012 version 0.9.8.4 major bugfix
+* ~/.pry_history wasnt being created (if it did not exist)! FIXED
+* `hist --save` saved colors! FIXED
+* added Pry#add_sticky_local API for adding sticky locals to individual pry instances
+
+2/3/2012 version 0.9.8.3 minor update
+* various tweaks to improve rbx support
+* commands now support optional block arguments
+* much improved help command
+* updated method_source dependencya
+* added wtf command
+* jruby should now work in windows (though without color)
+
+9/2/2012 version 0.9.8.2 bugfix
+* fixed bugs related to --super
+* upgraded slop dependency
+* added edit -c (edit current line)
+* edit now respects Pry.config.disable_autoreload option
+
+30/1/2012 version 0.9.8.1 bugfix
+* fixed broken --no-plugins option
+* Ensure ARGV is not mutated during option parsing.
+* Use a more rbx-friendly test for unicodeness
+* Use rbx-{18,19}mode as indicated  http://about.travis-ci.org/docs/user/languages/ruby/
+* Don't explode in gem-list [Fixes #453, #454]
+* Check for command-name collision on assignment [Fixes #450]
+
+25/1/2012 version 0.9.8
+
+MAJOR NEW FEATURES
+- upgraded command api, https://github.com/pry/pry/wiki/Custom-commands
+- added a system of hooks for customizing pry behaviour
+- changed syntax checking to use eval() for improved accuracy
+- added save-file command
+- added gist command (removed gist-method, new gist command is more general)
+
+complete CHANGELOG:
+* CommandError's no longer cause the current input to be disgarded
+* Better syntax highlighting for rbx code code
+* added cat --in to show pry input history
+* prefixed temporary file names with 'pry'
+* show-doc now supports -l and -b options (line numbers)
+* play now supports -i and -d options
+* moved UserCommandAPI command-set to pry-developer_tools plugin
+* added :when_started event for hooks, called in Pry.start
+* added a man page
+* added rename method to Pry::CommandSet (commands can be renamed)
+* added CommandSet#{before_command,after_command} for enhancing builtin commands
+* added checking for namespace collisions with pry commands, set Pry.config.collision_warning
+* work around namespace collisions by ensuring lines starting with a space are executed as
+* ruby.work around namespace collisions by prensuring lines starting with a space are executed as ruby
+* added handlers for Ctrl+C (SIGINT) on jruby, these are now caught as in other ruby versions
+* removed dependency on ruby_parser
+* prevented colours leaking across the pry prompt
+* fixed edge cases in Pry::Method, for methods with crazy names and methods that have been 'undef'd
+* refactored history handling code for clarity and correctness
+* added Pry::WrappedModule as a counterpart to Pry::Method
+* made a trailing , cause pry to wait for further input
+* removed gist-method command, added gist command
+* added pry-backtrace command to show history of current session
+* fixed whereami within 'super' methods
+* replaced inline version guards by Pry::Helpers::BaseHelpers.{rbx?,jruby?,windows?} etc.
+* removed the CommandProcessor, its functionality is part of the new Command class
+* changed cd .. at the top level so it doesn't quit pry.
+* changed edit-command to no-longer need a command set argument
+* fixed empty lines so that they don't replace _ by nil
+* fixed SyntaxErrors at the REPL level so they don't replace _ex_.
+
+5/11/2011 version 0.9.7.4 hotfix
+* ls -M now works in modules (bugfix)
+* added exception msg for bad cd object/path
+* no longer die when encounter exceptions in .pryrc
+* baked in CoolLine support
+* Pry.config.input in .pryrc now respected
+
+28/10/2011 version 0.9.7.3 hotfix-hotfix ;)
+* really fixed indentation for 'super if' and friends
+* Fixed indentation for tmux
+* added Pry.config.correct_indent option (to toggle whether indentation
+* corrected optional param behaviour for method signatures: e.g Signature meth(param1=?, param2=?)
+
+27/10/2011 version 0.9.7.2 hotfix
+* fixed indentation for 'super if' and 'ensure', 'next if', etc
+* refactored Pry#run_command so it can accept an eval_string parameter (so amend-line and so on can work with it)
+* changed ^D so it no longer resets indent level automatically
+
+26/10/2011 version 0.9.7.1 hotfix
+* fixed gem dependecy issues
+
+25/10/2011 version 0.9.7
+
+MAJOR NEW FEATURES:
+- upgraded ls command to have a more intuitive interface
+- added automatic indentation (thanks YorickPeterse!)
+- added Pry::Method wrapper class to encapsulate method-related functionality
+
+complete CHANGELOG:
+* fixed syntax highlighting for object literals
+* fixed ActiveSupport method-naming conflict with "in?"
+* added --super option to edit-method, show-method, and friends -  making it easier to operate on superclass methods
+* officially added edit --in to open previous expressions in an editor
+* whereami now works for REPL-defined code
+* started using JRuby parser for input validation in JRuby (thanks pangloss!)
+* fixed bug where ~/.pryrc could be loaded more than once (thanks kelseyjudson!)
+* added parse_options! helper to pull option parsing out of commands
+* Pry now respects the terminal's input encoding
+* moved some requires out of the startup process for improved speed
+* added input_array info to DEFAULT_PROMPT, e.g [1] pry(main)>
+* added --no-history option to pry binary (prevent history being LOADED, history will still be saved)
+
+27/9/2011 version 0.9.6.2 HOTFIX release
+* downgrading to CodeRay 0.9.8 due to problems with 1.0 and rails (autoloading problem) see #280 on pry and #6 on CodeRay
+* also added (as a minor feature) cirwin's implementation of edit --in
+* added early break/exit for objectpath errors (the 'cd 34/@hello/bad_path/23')
+
+19/9/2011 version 0.9.6
+* restored previous behavior of command-line switches (allowing "-rfilename")
+* removed -p option (--play) from edit command
+* `edit` with no arguments now edits the current or most recent expression
+* `edit` auto-reloads .rb files (need to specify -n to suppress)
+* added -p option (--patch) to edit-method command, which allows
+    monkeypatching methods without touching the original file
+* edit-method can now edit REPL-defined methods
+* cat --ex now works on exceptions in REPL-defined code
+* play -m now uses eval_string.replace()
+* play -m --open uses show-input to show play'd code
+* added "unindent" helper to make adding help to commands easier
+* local ./.pryrc now loaded after ~/.pryrc if it exists
+* cat --ex N and edit --ex N now can navigate through backtrace, where cat --ex (with no args) moves throuh successive levels of the backtrace automatically with state stored on the exceptino object itself
+* new option Pry.config.exception_window_size determines window size for cat --ex
+* input_stack now implemented - pushing objects onto a pry instance's input_stack causes the instance to read from those objects in turn as it encounters EOF on the previous object. On finishing the input_stack the input object for the pry instance is set back to Pry.config.input, if this fails, pry breaks out of the REPL (throw(:breakout)) with an error message
+* Pry.config.system() defines how pry runs system commands
+* now injecting target_self method into command scope
+* play now performs 'show-input' always unless eval_string contains a valid expression (i.e it's about to be eval'd)
+* play and hist --replay now push the current input object onto the input_stack before redirecting input to a StringIO (works much better with pry-remote now)
+
+8/9/2011 version 0.9.5
+
+MAJOR NEW FEATURES:
+- JRuby support, including show-method/edit-method and editor integration on both 1.8 and 1.9 versions
+- extended cd syntax: cd ../@x/y
+- play command now works much better with _in_ array (this is a very powerful feature, esp with Pry::NAV_PROMPT)
+- history saving/loading is now lightning fast
+- 'edit' (entered by itself) now opens current lines in input buffer in an editor, and evals on exit
+- 'edit' command is also, in general more intelligent
+- ls output no longer in array format, and colors can be configured, e.g: Pry.config.ls.ivar_color = :bright_blue
+- new switch-to command for moving around the binding stack without exiting out of sessions
+- more sophisticated prompts, Pry::NAV_PROMPT to ease deep spelunking of code
+- major bug fix for windows systems
+- much better support for huge objects, should no longer hang pry (see #245)
+- cat --ex and edit --ex now work better
+
+complete CHANGELOG:
+* tempfile should end in .rb (for edit -t)
+* ls output should not be in array format
+* fix history saving (should not save all of Readline::HISTORY, but only what changed)
+* prevent blank lines going to Readline::HISTORY (thanks cirwin!)
+* ensure that cat --ex emulates the `whereami` format - includes line numbers and formatted the same, etc
+* fixed bug #200 ( https://github.com/pry/pry/issues/200 )- string interpolation bug (thanks to ryanf)
+* show-doc and stat now display method visibility (update WIKI)
+* got rid of warnings caused by stricter ruby 1.9.3 rules
+* remove interpolation of command names and fix interpolation error messag (update WIKI) (thanks ryanf!)
+* 'nested sessions' now use binding stacks (so each instance manages its own collection of bindings without spawning other instances)
+* 'cd ..' just pops a binding off the binding_stack with special behaviour when only one binding in stack - it breaks out of the repl loop
+* added switch-to command (like jump-to but doesnt unwind the stack)
+* show-method and show-doc now accept multiple method names
+* control_d hook added (Pry.config.control_d_handler)
+* behaviour of ^d is now to break out of current expr if in multi-line expr, or break out of current context if nested, or break out of pry repl loop if at top-level
+* can no longer interpolate command name itself e.g #{x}-#{y} where x = "show" and y = "doc"
+* ^C no longer captured
+* got rid of Pry.active_instance, Pry.last_exception and friends.
+* also special locals now shared among bindings in a pry instance (i.e _ex_ (and friends) re-injected into new binding entered with 'cd')
+* renamed inp and out to _in_ and _out_ (to avoid collisions with actual locals in debugging scope)
+* added third parameter to prompts, the pry instance itself (_pry) see https://github.com/pry/pry/issues/233 for why it's important
+* cd behaviour when no args performs the same as `cd /`
+* commands with keep_retval can now return nil (to suppress output now return 'void' instead)
+* Pry::CommandProcessor::Result introduced
+* Pry.view_clip() modified to be more robust and properly display Class#name
+* edit command when invoked with no args now works like edit -t
+* when edit is invoked (with no args or with -t) inside a multi-line expression input buffer, it dumps that buffer into a temp file and takes you to it
+* got rid of Pry#null_input? since all that was needed was eval_string.empty?
+* cd command now supports complex syntax: cd ../@y/y/../z
+* JRuby is no longer a 2nd class citizen, almost full JRuby support, passing 100% tests
+* added Pry::NAV_PROMPT (great new navigation prompt, per robgleeson) and Pry::SIMPLE_PRINT for simple (IRB-style) print output (just using inspect)
+* _pry_ now passed as 3rd parameter to :before_session hook
+* ls colors now configurable via Pry.config.ls.local_var_color = :bright_red etc
+* ls separator configurable via, e.g Pry.config.ls.separator = "  "
+* Pry.view_clip() now only calls inspect on a few immediates, otherwise uses the #<> syntax, which has been truncated further to exclude teh mem address, again related to #245
+
+27/7/2011 version 0.9.3
+* cat --ex (cats 5 lines above and below line in file where exception was raised)
+* edit --ex (edits line in file where exception was raised)
+* edit -t (opens a temporary file and evals it in current context when closed)
+* `pry -r` requires now happen after plugin loading (so as not to interfere with
+* new Pry.config.disable_auto_reload option, for turning off auto reloading by edit-method and related (thanks ryanf)
+* add better error messages for `cd` command
+* fixed exotic object regression - BasicObject.new etc now return "=> unknown"
+* added reload-method command (reloads the associated file of a method)
+* converted: import => import-set, version => pry-version, install => install-command
+* Pry.config.command_prefix support (thanks ryanf!)
+* fixed indentation for simple-prompt
+* hist command now excludes last line of input (the command invocation itself)
+* hist now has `history` alias
+* missing plugins no longer raise exception, just print a warning to $stderr
+* fixed jedit editor support
+
+21/6/2011 version 0.9.2
+* fixed string interpolation bug (caused valid ruby code not to execute, sorry!)
+* fixed `ls` command, so it can properly display members of Object and classes, and BasicObject, etc
+* added a few git related commands to experimental command set, blame and diff
+
+17/6/2011 version 0.9.0
+* plugin system
+* regex commands
+* show-method works on methods defined in REPL
+* new command system/API
+* rubinius core support
+* more backports to ruby 1.8
+* inp/out special locals
+* _ex_ backtrace navigation object (_ex_.line, _ex_.file)
+* readline history saving/loading
+* prompt stack
+* more hooks
+* amend-line
+* play
+* show-input
+* edit
+* much more comprehensive test suite
+* support for new and old rubygems API
+* changed -s behaviour of ls (now excludes Object methods)
+* removed eval-file, lls, lcd, and a few other commands
+
+
+26/3/2011 version 0.7.6.1
+* added slightly better support for YARD
+* now @param and @return tags are colored green and markdown `code` is syntax highlighted using coderay
+
+26/3/2011 version 0.7.6
+* `whereami` command now accepts parameter AROUND, to display AROUND lines on eitherside of invocation line.
+* made it so `whereami` is invoked even if no method exists in current context (i.e in rspec tests)
+* added rubinius support for `whereami` invocation in HOOKS by checking for __unknown__.rb rather than just <main>
+
+15/3/2011 version 0.7.0
+* add pry-doc support with syntax highlighting for docs
+* add 'mj' option to ls (restrict to singleton methods)
+* add _ex_ local to hold last exception raised in an exception
+
+6/3/2011 version 0.6.8
+* add whereami command, a la the `ir_b` gem
+* make whereami run at the start of every session
+* make .pryrc be loaded by run-time pry sessions
+
+4/3/2011 version 0.6.7
+* color support
+* --simple-prompt for pry commandline
+* -I mode for pry commandline
+* --color mode for pry commandline
+* clean up requires (put them all in one place)
+* simple-prompt command and toggle-color commandd.
+
+28/2/2011 version 0.6.3
+* Using MethodSource 0.3.4 so 1.8 show-method support provided
+* `Set` class added to list of classes that are inspected
+
+26/2/2011 version 0.6.1
+* !@ command alias for exit_all
+* `cd /` for breaking out to pry top level (jump-to 0)
+* made `-e` option work in a more effective way for `pry` command line invocation
+* exit and exit-all commands now accept a parameter, this parameter becomes the return value of repl()
+* `command` method from CommandBase now accepts a :keep_retval arg that determines if command value is returned to pry session or just `nil` (`nil` was old behaviour)
+* tests for new :keep_retval and exit-all/exit behaviour; :keep_retval will remain undocumented.
+
+22/2/2011 version 0.5.8
+* Added -c (context) option to show-doc, show-methods and eval-file
+* Fixed up ordering issue of -c and -r parameters to command line pry
+
+21/2/2011 version 0.5.7
+* Added pry executable, auto-loads .pryrc in user's home directory, if it
+	exists.
+
+19/2/2011 version 0.5.5
+* Added Pry.run_command
+* More useful error messages
+* Easter eggs (game and cohen-poem)
+
+17/2/2011 version 0.5.0
+* Use clipped version of Pry.view() for large objects
+* Exit Pry session on ^d
+* Use Shellwords for breaking up parameters to pry commands
+* Use OptionParser to parse options for default pry commands
+* Add version command
+* Refactor 'status' command: add current method info
+* Add meth_name_from_binding utility lambda to commands.rb
+* Add -M, -m, -v(erbose), -a(ll), -s(uper), -l(ocals), -i(ivars), -k(klass
+	vars), etc options to ls
+* add -M(instance method) options to show-method and show-doc
+* add --help option to most commands
+* Get rid of ls_method and ls_imethods (subsumed by more powerful ls)
+* Get rid of show_idoc and show_imethod
+* Add special eval-file command that evals target file in current context
+
+27/1/2011 version 0.4.5
+* fixed show_method (though fragile as it references __binding_impl__
+	directly, making a name change to that method difficult
+27/1/2011 version 0.4.4
+* oops, added examples/ directory
+26/1/2011 version 0.4.3
+* added alias_command and desc methods to Pry::CommandBase
+* changed behaviour of ls_methods and ls_imethods to return sorted lists
+	of methods
+23/1/2011 version 0.4.1
+* made it so a 'def meth;end' in an object Pry session defines singleton
+	methods, not methods on the class (except in the case of
+	immediates)
+* reorganized documentation, moving customization to a separate wiki file
+* storing wiki in a nested git repo, as github wiki pages have their own
+	repo
+* added more tests for new method definition behaviour
+21/1/2011 version 0.4.0
+* added command API
+* added many new commands, i.e ls_methods and friends
+* modified other commands
+* now accepts greater customization, can modify: input, output, hooks,
+	prompt, print object
+* added tab completion (even completes commands)
+* added extensive tests
+* added examples
+* many more changes
+9/12/2010 version 0.1.3
+* Got rid of rubygems dependency, refactored some code.
+8/12/2010 version 0.1.2
+* now rescuing SyntaxError as well as Racc::Parser error in valid_expression?
+8/12/2010 version 0.1.0
+* release!

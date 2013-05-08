@@ -6,8 +6,8 @@ require 'sidekiq/throttler/version'
 Gem::Specification.new do |gem|
   gem.name          = 'sidekiq-throttler'
   gem.version       = Sidekiq::Throttler::VERSION
-  gem.authors       = ['Gabriel Evans']
-  gem.email         = ['gabriel@codeconcoction.com']
+  gem.authors       = ['Pablo Cantero']
+  gem.email         = ['pablo@pablocantero.com']
   gem.description   = %q{Sidekiq middleware that adds the ability to rate limit job execution.}
   gem.summary       = %q{Sidekiq::Throttler is a middleware for Sidekiq that adds the ability to rate limit job execution on a per-worker basis.}
   gem.homepage      = 'https://github.com/gevans/sidekiq-throttler'
@@ -19,6 +19,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'activesupport'
   gem.add_dependency 'sidekiq', '>= 2.5', '< 3.0'
+  gem.add_dependency 'statsd-ruby'
 
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'pry'

@@ -1,0 +1,4 @@
+--no-private
+--files LICENSE.txt
+--exclude '~$'
+--title 'AWS SDK for Ruby'
