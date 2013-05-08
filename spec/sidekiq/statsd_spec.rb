@@ -9,7 +9,7 @@ describe Sidekiq::Statsd do
 
   describe "#call" do
     it "increments success" do
-      Sidekiq::Statsd::Statsd.any_instance.
+      Sidekiq::Statsd::Client.any_instance.
         should_receive(:increment).
         with "#{worker.class.name}.success"
 
@@ -17,13 +17,14 @@ describe Sidekiq::Statsd do
     end
 
     it "increments failure" do
-      Sidekiq::Statsd::Statsd.any_instance.
+      Sidekiq::Statsd::Client.any_instance.
         should_receive(:increment).
         with "#{worker.class.name}.failure"
 
       b = ->{ raise "error" }
 
-      expect{ statsd.call worker, msg, queue, &b }.to raise_error
+      expect{ statsd.call(worker, msg, queue, &b) }.to raise_error
     end
   end
 end
+

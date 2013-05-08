@@ -2,8 +2,8 @@ require "sidekiq"
 require "active_support"
 require "active_support/core_ext"
 
-require "sidekiq/stastd/version"
-require "sidekiq/stastd/statsd"
+require "sidekiq/statsd/version"
+require "sidekiq/statsd/client"
 
 module Sidekiq
   ##
@@ -30,7 +30,7 @@ module Sidekiq
     # @param queue [String] The current queue.
     def call worker, msg, queue
       yield
-      stastd = Sidekiq::Statsd::Statsd.new @options
+      stastd = Sidekiq::Statsd::Client.new @options
       stastd.increment [worker.class.name, "success"].join(".")
     rescue => e
       stastd.increment [worker.class.name, "failure"].join(".")

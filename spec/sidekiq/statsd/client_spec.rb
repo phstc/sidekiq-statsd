@@ -1,11 +1,11 @@
 require "spec_helper"
 require "statsd"
 
-describe Sidekiq::Statsd::Statsd do
+describe Sidekiq::Statsd::Client do
   let(:worker_name)   { "ImageWorker" }
   let(:statsd_client) { double "StatsD Client" }
 
-  before { Statsd.stub new: statsd_client }
+  before { ::Statsd.stub new: statsd_client }
 
   context "user defined options" do
     let(:options) do
@@ -19,7 +19,7 @@ describe Sidekiq::Statsd::Statsd do
 
     describe "#initialize" do
       it "initializes StatsD client" do
-        Statsd.should_receive(:new).with options["host"], options["port"]
+        ::Statsd.should_receive(:new).with options["host"], options["port"]
         statsd
       end
     end
@@ -37,7 +37,7 @@ describe Sidekiq::Statsd::Statsd do
 
     describe "#initialize" do
       it "initializes StatsD client" do
-        Statsd.should_receive(:new).with "localhost", 8125
+        ::Statsd.should_receive(:new).with "localhost", 8125
         statsd
       end
     end
