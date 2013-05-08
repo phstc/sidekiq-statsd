@@ -1,4 +1,4 @@
-require "helper"
+require 'helper'
 
 describe Statsd do
   class Statsd
@@ -6,7 +6,7 @@ describe Statsd do
   end
 
   before do
-    @statsd = Statsd.new("localhost", 1234)
+    @statsd = Statsd.new('localhost', 1234)
     @socket = Thread.current[:statsd_socket] = FakeUDPSocket.new
   end
 
@@ -14,33 +14,33 @@ describe Statsd do
 
   describe "#initialize" do
     it "should set the host and port" do
-      @statsd.host.must_equal "localhost"
+      @statsd.host.must_equal 'localhost'
       @statsd.port.must_equal 1234
     end
 
     it "should default the host to 127.0.0.1 and port to 8125" do
       statsd = Statsd.new
-      statsd.host.must_equal "127.0.0.1"
+      statsd.host.must_equal '127.0.0.1'
       statsd.port.must_equal 8125
     end
   end
 
   describe "#host and #port" do
     it "should set host and port" do
-      @statsd.host = "1.2.3.4"
+      @statsd.host = '1.2.3.4'
       @statsd.port = 5678
-      @statsd.host.must_equal "1.2.3.4"
+      @statsd.host.must_equal '1.2.3.4'
       @statsd.port.must_equal 5678
     end
 
     it "should not resolve hostnames to IPs" do
-      @statsd.host = "localhost"
-      @statsd.host.must_equal "localhost"
+      @statsd.host = 'localhost'
+      @statsd.host.must_equal 'localhost'
     end
 
     it "should set nil host to default" do
       @statsd.host = nil
-      @statsd.host.must_equal "127.0.0.1"
+      @statsd.host.must_equal '127.0.0.1'
     end
 
     it "should set nil port to default" do
@@ -51,14 +51,14 @@ describe Statsd do
 
   describe "#increment" do
     it "should format the message according to the statsd spec" do
-      @statsd.increment("foobar")
+      @statsd.increment('foobar')
       @socket.recv.must_equal ['foobar:1|c']
     end
 
     describe "with a sample rate" do
       before { class << @statsd; def rand; 0; end; end } # ensure delivery
       it "should format the message according to the statsd spec" do
-        @statsd.increment("foobar", 0.5)
+        @statsd.increment('foobar', 0.5)
         @socket.recv.must_equal ['foobar:1|c|@0.5']
       end
     end
@@ -66,31 +66,31 @@ describe Statsd do
 
   describe "#decrement" do
     it "should format the message according to the statsd spec" do
-      @statsd.decrement("foobar")
+      @statsd.decrement('foobar')
       @socket.recv.must_equal ['foobar:-1|c']
     end
 
     describe "with a sample rate" do
       before { class << @statsd; def rand; 0; end; end } # ensure delivery
       it "should format the message according to the statsd spec" do
-        @statsd.decrement("foobar", 0.5)
+        @statsd.decrement('foobar', 0.5)
         @socket.recv.must_equal ['foobar:-1|c|@0.5']
       end
     end
   end
 
   describe "#gauge" do
-    it "should send a message with a "g" type, per the nearbuy fork" do
-      @statsd.gauge("begrutten-suffusion", 536)
+    it "should send a message with a 'g' type, per the nearbuy fork" do
+      @statsd.gauge('begrutten-suffusion', 536)
       @socket.recv.must_equal ['begrutten-suffusion:536|g']
-      @statsd.gauge("begrutten-suffusion", -107.3)
+      @statsd.gauge('begrutten-suffusion', -107.3)
       @socket.recv.must_equal ['begrutten-suffusion:-107.3|g']
     end
 
     describe "with a sample rate" do
       before { class << @statsd; def rand; 0; end; end } # ensure delivery
       it "should format the message according to the statsd spec" do
-        @statsd.gauge("begrutten-suffusion", 536, 0.1)
+        @statsd.gauge('begrutten-suffusion', 536, 0.1)
         @socket.recv.must_equal ['begrutten-suffusion:536|g|@0.1']
       end
     end
@@ -98,14 +98,14 @@ describe Statsd do
 
   describe "#timing" do
     it "should format the message according to the statsd spec" do
-      @statsd.timing("foobar", 500)
+      @statsd.timing('foobar', 500)
       @socket.recv.must_equal ['foobar:500|ms']
     end
 
     describe "with a sample rate" do
       before { class << @statsd; def rand; 0; end; end } # ensure delivery
       it "should format the message according to the statsd spec" do
-        @statsd.timing("foobar", 500, 0.5)
+        @statsd.timing('foobar', 500, 0.5)
         @socket.recv.must_equal ['foobar:500|ms|@0.5']
       end
     end
@@ -113,14 +113,14 @@ describe Statsd do
 
   describe "#set" do
     it "should format the message according to the statsd spec" do
-      @statsd.set("foobar", 765)
+      @statsd.set('foobar', 765)
       @socket.recv.must_equal ['foobar:765|s']
     end
 
     describe "with a sample rate" do
       before { class << @statsd; def rand; 0; end; end } # ensure delivery
       it "should format the message according to the statsd spec" do
-        @statsd.set("foobar", 500, 0.5)
+        @statsd.set('foobar', 500, 0.5)
         @socket.recv.must_equal ['foobar:500|s|@0.5']
       end
     end
@@ -128,20 +128,20 @@ describe Statsd do
 
   describe "#time" do
     it "should format the message according to the statsd spec" do
-      @statsd.time("foobar") { "test" }
+      @statsd.time('foobar') { 'test' }
       @socket.recv.must_equal ['foobar:0|ms']
     end
 
     it "should return the result of the block" do
-      result = @statsd.time("foobar") { "test" }
-      result.must_equal "test"
+      result = @statsd.time('foobar') { 'test' }
+      result.must_equal 'test'
     end
 
     describe "with a sample rate" do
       before { class << @statsd; def rand; 0; end; end } # ensure delivery
 
       it "should format the message according to the statsd spec" do
-        @statsd.time("foobar", 0.5) { "test" }
+        @statsd.time('foobar', 0.5) { 'test' }
         @socket.recv.must_equal ['foobar:0|ms|@0.5']
       end
     end
@@ -151,7 +151,7 @@ describe Statsd do
     describe "when the sample rate is 1" do
       before { class << @statsd; def rand; raise end; end }
       it "should send" do
-        @statsd.timing("foobar", 500, 1)
+        @statsd.timing('foobar', 500, 1)
         @socket.recv.must_equal ['foobar:500|ms']
       end
     end
@@ -159,7 +159,7 @@ describe Statsd do
     describe "when the sample rate is greater than a random value [0,1]" do
       before { class << @statsd; def rand; 0; end; end } # ensure delivery
       it "should send" do
-        @statsd.timing("foobar", 500, 0.5)
+        @statsd.timing('foobar', 500, 0.5)
         @socket.recv.must_equal ['foobar:500|ms|@0.5']
       end
     end
@@ -167,72 +167,72 @@ describe Statsd do
     describe "when the sample rate is less than a random value [0,1]" do
       before { class << @statsd; def rand; 1; end; end } # ensure no delivery
       it "should not send" do
-        @statsd.timing("foobar", 500, 0.5).must_equal nil
+        @statsd.timing('foobar', 500, 0.5).must_equal nil
       end
     end
 
     describe "when the sample rate is equal to a random value [0,1]" do
       before { class << @statsd; def rand; 0; end; end } # ensure delivery
       it "should send" do
-        @statsd.timing("foobar", 500, 0.5)
+        @statsd.timing('foobar', 500, 0.5)
         @socket.recv.must_equal ['foobar:500|ms|@0.5']
       end
     end
   end
 
   describe "with namespace" do
-    before { @statsd.namespace = "service" }
+    before { @statsd.namespace = 'service' }
 
     it "should add namespace to increment" do
-      @statsd.increment("foobar")
+      @statsd.increment('foobar')
       @socket.recv.must_equal ['service.foobar:1|c']
     end
 
     it "should add namespace to decrement" do
-      @statsd.decrement("foobar")
+      @statsd.decrement('foobar')
       @socket.recv.must_equal ['service.foobar:-1|c']
     end
 
     it "should add namespace to timing" do
-      @statsd.timing("foobar", 500)
+      @statsd.timing('foobar', 500)
       @socket.recv.must_equal ['service.foobar:500|ms']
     end
 
     it "should add namespace to gauge" do
-      @statsd.gauge("foobar", 500)
+      @statsd.gauge('foobar', 500)
       @socket.recv.must_equal ['service.foobar:500|g']
     end
   end
 
   describe "with postfix" do
-    before { @statsd.postfix = "ip-23-45-56-78" }
+    before { @statsd.postfix = 'ip-23-45-56-78' }
 
     it "should add postfix to increment" do
-      @statsd.increment("foobar")
+      @statsd.increment('foobar')
       @socket.recv.must_equal ['foobar.ip-23-45-56-78:1|c']
     end
 
     it "should add postfix to decrement" do
-      @statsd.decrement("foobar")
+      @statsd.decrement('foobar')
       @socket.recv.must_equal ['foobar.ip-23-45-56-78:-1|c']
     end
 
     it "should add namespace to timing" do
-      @statsd.timing("foobar", 500)
+      @statsd.timing('foobar', 500)
       @socket.recv.must_equal ['foobar.ip-23-45-56-78:500|ms']
     end
 
     it "should add namespace to gauge" do
-      @statsd.gauge("foobar", 500)
+      @statsd.gauge('foobar', 500)
       @socket.recv.must_equal ['foobar.ip-23-45-56-78:500|g']
     end
   end
 
-  describe "#postfix=" do
+  describe '#postfix=' do
     describe "when nil, false, or empty" do
       it "should set postfix to nil" do
-        [nil, false, ""].each do |value|
-          @statsd.postfix = "a postfix"
+        [nil, false, ''].each do |value|
+          @statsd.postfix = 'a postfix'
           @statsd.postfix = value
           @statsd.postfix.must_equal nil
         end
@@ -241,13 +241,13 @@ describe Statsd do
   end
 
   describe "with logging" do
-    require "stringio"
+    require 'stringio'
     before { Statsd.logger = Logger.new(@log = StringIO.new)}
 
     it "should write to the log in debug" do
       Statsd.logger.level = Logger::DEBUG
 
-      @statsd.increment("foobar")
+      @statsd.increment('foobar')
 
       @log.string.must_match "Statsd: foobar:1|c"
     end
@@ -255,7 +255,7 @@ describe Statsd do
     it "should not write to the log unless debug" do
       Statsd.logger.level = Logger::INFO
 
-      @statsd.increment("foobar")
+      @statsd.increment('foobar')
 
       @log.string.must_be_empty
     end
@@ -281,18 +281,18 @@ describe Statsd do
 
   describe "handling socket errors" do
     before do
-      require "stringio"
+      require 'stringio'
       Statsd.logger = Logger.new(@log = StringIO.new)
       @socket.instance_eval { def send(*) raise SocketError end }
     end
 
     it "should ignore socket errors" do
-      @statsd.increment("foobar").must_equal nil
+      @statsd.increment('foobar').must_equal nil
     end
 
     it "should log socket errors" do
-      @statsd.increment("foobar")
-      @log.string.must_match "Statsd: SocketError"
+      @statsd.increment('foobar')
+      @log.string.must_match 'Statsd: SocketError'
     end
   end
 
@@ -315,7 +315,7 @@ describe Statsd do
 
         # The first three should flush, the next two will be flushed when the
         # block is done.
-        5.times { b.increment("foobar") }
+        5.times { b.increment('foobar') }
 
         @socket.recv.must_equal [(["foobar:1|c"] * 3).join("\n")]
       end
@@ -328,21 +328,21 @@ describe Statsd do
       batch.flush
       @socket.recv.must_be :nil?
 
-      batch.increment "foobar"
+      batch.increment 'foobar'
       batch.flush
       @socket.recv.must_equal %w[foobar:1|c]
     end
 
     it "should support setting namespace for the underlying instance" do
       batch = Statsd::Batch.new(@statsd)
-      batch.namespace = "ns"
-      @statsd.namespace.must_equal "ns"
+      batch.namespace = 'ns'
+      @statsd.namespace.must_equal 'ns'
     end
 
     it "should support setting host for the underlying instance" do
       batch = Statsd::Batch.new(@statsd)
-      batch.host = "1.2.3.4"
-      @statsd.host.must_equal "1.2.3.4"
+      batch.host = '1.2.3.4'
+      @statsd.host.must_equal '1.2.3.4'
     end
 
     it "should support setting port for the underlying instance" do
@@ -372,13 +372,13 @@ describe Statsd do
   describe "with a real UDP socket" do
     it "should actually send stuff over the socket" do
       socket = UDPSocket.new
-      host, port = "localhost", 12345
+      host, port = 'localhost', 12345
       socket.bind(host, port)
 
       statsd = Statsd.new(host, port)
-      statsd.increment("foobar")
+      statsd.increment('foobar')
       message = socket.recvfrom(16).first
       message.must_equal 'foobar:1|c'
     end
   end
-end if ENV["LIVE"]
+end if ENV['LIVE']

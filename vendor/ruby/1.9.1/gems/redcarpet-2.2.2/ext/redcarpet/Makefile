@@ -126,8 +126,8 @@ STATIC_LIB =
 
 BINDIR        = $(bindir)
 RUBYCOMMONDIR = $(sitedir)$(target_prefix)
-RUBYLIBDIR = /Users/pablo/workspace/sidekiq-throttler/vendor/ruby/1.9.1/gems/redcarpet-2.2.2/lib$(target_prefix)
-RUBYARCHDIR = /Users/pablo/workspace/sidekiq-throttler/vendor/ruby/1.9.1/gems/redcarpet-2.2.2/lib$(target_prefix)
+RUBYLIBDIR = /Users/pablo/workspace/sidekiq-statsd/vendor/ruby/1.9.1/gems/redcarpet-2.2.2/lib$(target_prefix)
+RUBYARCHDIR = /Users/pablo/workspace/sidekiq-statsd/vendor/ruby/1.9.1/gems/redcarpet-2.2.2/lib$(target_prefix)
 HDRDIR        = $(rubyhdrdir)/ruby$(target_prefix)
 ARCHHDRDIR    = $(rubyhdrdir)/$(arch)/ruby$(target_prefix)
 
