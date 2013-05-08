@@ -2,8 +2,8 @@ require "spec_helper"
 require "statsd"
 
 describe Sidekiq::Throttler::Statsd do
-  let(:worker_name) { "ImageWorker" }
-  let(:statsd_client) { double "Statsd Client" }
+  let(:worker_name)   { "ImageWorker" }
+  let(:statsd_client) { double "StatsD Client" }
 
   before { Statsd.stub new: statsd_client }
 
@@ -12,21 +12,21 @@ describe Sidekiq::Throttler::Statsd do
       { "prefix" => "super",
         "env"    => "man",
         "host"   => "lobster",
-        "port"   => 8125 }
+        "port"   => 6666 }
     end
 
     subject(:statsd) { described_class.new options }
 
     describe "#initialize" do
-      it "initializes Statsd client" do
+      it "initializes StatsD client" do
         Statsd.should_receive(:new).with options["host"], options["port"]
         statsd
       end
     end
 
     describe "#increment" do
-      it "increments statsd" do
-        statsd_client.should_receive(:increment).with "#{options["env"]}.#{options["prefix"]}.#{worker_name}"
+      it "increments counter" do
+        statsd_client.should_receive(:increment).with [options["env"], options["prefix"], worker_name].join(".")
         statsd.increment worker_name
       end
     end
@@ -36,14 +36,14 @@ describe Sidekiq::Throttler::Statsd do
     subject(:statsd) { described_class.new }
 
     describe "#initialize" do
-      it "initializes Statsd client" do
+      it "initializes StatsD client" do
         Statsd.should_receive(:new).with "localhost", 8125
         statsd
       end
     end
 
     describe "#increment" do
-      it "increments statsd" do
+      it "increments counter" do
         statsd_client.should_receive(:increment).with "production.worker.#{worker_name}"
         statsd.increment worker_name
       end

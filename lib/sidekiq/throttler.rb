@@ -3,20 +3,21 @@ require "active_support"
 require "active_support/core_ext"
 
 require "sidekiq/throttler/version"
-require "sidekiq/throttler/rate_limit"
 require "sidekiq/throttler/statsd"
 
 module Sidekiq
   ##
   # Sidekiq StatsD is a middleware to increment your worker executions counter (success and failures).
-  # It makes possible to follow your workers executions in fancy graphics using Graphite.
   #
-  # @param [Hash] options the parameters to initialize the StatsD client.
-  # @option opts [String] :env ("production") env.prefix.worker_name.success|failure.
-  # @option opts [String] :prefix ("worker")
-  # @option opts [String] :host ("localhost")
-  # @option opts [String] :port ("8125")
   class Throttler
+    ##
+    # Initializes the middleware with options.
+    #
+    # @param [Hash] options The options to initialize the StatsD client.
+    # @option options [String] :env ("production")
+    # @option options [String] :prefix ("worker")
+    # @option options [String] :host ("localhost")
+    # @option options [String] :port ("8125")
     def initialize options={}
       @options = options
     end
@@ -24,14 +25,9 @@ module Sidekiq
     ##
     # Increments the metrics.
     #
-    # @param [Sidekiq::Worker] worker
-    #   The worker the job belongs to.
-    #
-    # @param [Hash] msg
-    #   The job message.
-    #
-    # @param [String] queue
-    #   The current queue.
+    # @param worker [Sidekiq::Worker] The worker the job belongs to.
+    # @param msg [Hash] The job message.
+    # @param queue [String] The current queue.
     def call worker, msg, queue
       stastd = Sidekiq::Throttler::Statsd.new @options
       yield

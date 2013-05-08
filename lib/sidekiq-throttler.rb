@@ -1,1 +1,1 @@
-require 'sidekiq/throttler'
+require "sidekiq/throttler"

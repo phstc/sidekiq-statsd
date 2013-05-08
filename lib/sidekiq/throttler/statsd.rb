@@ -4,22 +4,28 @@ module Sidekiq
   class Throttler
     class Statsd
       ##
-      # Initializes StatsD client.
+      # Initializes StatsD client with options.
       #
-      # @param [Hash] options the parameters to initialize the StatsD client.
-      # @option opts [String] :env ("production") env.prefix.worker_name.success|failure.
-      # @option opts [String] :prefix ("worker")
-      # @option opts [String] :host ("localhost")
-      # @option opts [String] :port ("8125")
+      # @param [Hash] options The options to initialize the StatsD client.
+      # @option options [String] :env ("production")
+      # @option options [String] :prefix ("worker")
+      # @option options [String] :host ("localhost")
+      # @option options [String] :port ("8125")
       def initialize options={}
-        @options = { "prefix" => "worker",
-                     "env"    => "production",
+        @options = { "env"    => "production",
+                     "prefix" => "worker",
                      "host"   => "localhost",
                      "port"   => 8125 }.merge options
 
         @statsd_client = ::Statsd.new @options["host"], @options["port"]
       end
 
+      ##
+      # Increments the counter.
+      #
+      # StatsD key format: env.prefix.worker_name.success|failure.
+      #
+      # @param key [String] The key to be incremented.
       def increment key
         @statsd_client.increment [@options["env"], @options["prefix"], key].join(".")
       end
