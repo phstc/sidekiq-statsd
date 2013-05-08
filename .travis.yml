@@ -10,7 +10,7 @@ branches:
 notifications:
   email:
     recipients:
-      - gabriel@codeconcoction.com
+      - pablo@pablocantero.com
 matrix:
   allow_failures:
     - rvm: jruby-19mode
