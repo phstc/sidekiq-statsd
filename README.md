@@ -42,8 +42,6 @@ end
 # @option options [String] :port ("8125") The StatsD port.
 ```
 
-## Usage
-
 ## Contributing
 
 1. Fork it
