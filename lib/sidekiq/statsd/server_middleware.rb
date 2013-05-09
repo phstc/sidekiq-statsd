@@ -9,12 +9,12 @@ module Sidekiq::Statsd
     # Initializes the middleware with options.
     #
     # @param [Hash] options The options to initialize the StatsD client.
-    # @option options [String] :env ("production")
-    # @option options [String] :prefix ("worker")
-    # @option options [String] :host ("localhost")
-    # @option options [String] :port ("8125")
+    # @option options [String] :env ("production") The env to segment the metric key (e.g. env.prefix.worker_name.success|failure).
+    # @option options [String] :prefix ("worker") The prefix to segment the metric key (e.g. env.prefix.worker_name.success|failure).
+    # @option options [String] :host ("localhost") The StatsD host.
+    # @option options [String] :port ("8125") The StatsD port.
     def initialize options={}
-      @options = options
+      @statsd = Sidekiq::Statsd::Client.new options
     end
 
     ##
@@ -24,13 +24,12 @@ module Sidekiq::Statsd
     # @param msg [Hash] The job message.
     # @param queue [String] The current queue.
     def call worker, msg, queue
-      stastd = Sidekiq::Statsd::Client.new @options
       yield
-      stastd.increment [worker.class.name, "success"].join(".")
+      @statsd.increment [worker.class.name, "success"].join(".")
     rescue => e
-      stastd.increment [worker.class.name, "failure"].join(".")
+      @statsd.increment [worker.class.name, "failure"].join(".")
       raise e
     end
-  end # Statsd
+  end # ServerMiddleware
 end # Sidekiq
 

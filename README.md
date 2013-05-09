@@ -31,9 +31,15 @@ Sidekiq::Statsd to your server middleware:
 ```ruby
 Sidekiq.configure_server do |config|
   config.server_middleware do |chain|
-    chain.add Sidekiq::Statsd, env: "production", prefix: "worker", host: "localhost", port: 8125
+    chain.add Sidekiq::Statsd::ServerMiddleware, env: "production", prefix: "worker", host: "localhost", port: 8125
   end
 end
+
+# @param [Hash] options The options to initialize the StatsD client.
+# @option options [String] :env ("production") The env to segment the metric key (e.g. env.prefix.worker_name.success|failure).
+# @option options [String] :prefix ("worker") The prefix to segment the metric key (e.g. env.prefix.worker_name.success|failure).
+# @option options [String] :host ("localhost") The StatsD host.
+# @option options [String] :port ("8125") The StatsD port.
 ```
 
 ## Usage
