@@ -117,7 +117,7 @@ conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘ffi_raw_call’
 Undefined symbols for architecture x86_64:
   "_ffi_raw_call", referenced from:
-      _t in cc2GzmCF.o
+      _t in ccD29jc5.o
 ld: symbol(s) not found for architecture x86_64
 collect2: ld returned 1 exit status
 checked program was:
@@ -226,7 +226,7 @@ conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘ffi_prep_cif_var’
 Undefined symbols for architecture x86_64:
   "_ffi_prep_cif_var", referenced from:
-      _t in cckPUmQj.o
+      _t in cc2wYsev.o
 ld: symbol(s) not found for architecture x86_64
 collect2: ld returned 1 exit status
 checked program was:

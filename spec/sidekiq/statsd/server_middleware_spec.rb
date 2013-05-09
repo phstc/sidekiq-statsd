@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Sidekiq::Statsd do
+describe Sidekiq::Statsd::ServerMiddleware do
   subject(:statsd) { described_class.new }
 
   let(:worker) { double "Dummy worker" }

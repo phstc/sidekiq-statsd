@@ -14,7 +14,7 @@ end
 require "rspec"
 require "timecop"
 
-require "sidekiq/statsd"
+require "sidekiq-statsd"
 
 # Autoload every worker for the test suite that sits in spec/app/workers
 Dir[File.join(WORKERS, "*.rb")].sort.each do |file|
