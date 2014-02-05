@@ -15,6 +15,7 @@ module Sidekiq::Statsd
     # @option options [String] :port ("8125") The StatsD port.
     def initialize options={}
       @statsd = Sidekiq::Statsd::Client.new options
+      @sidekiq_stats = Sidekiq::Stats.new
     end
 
     ##
@@ -25,11 +26,27 @@ module Sidekiq::Statsd
     # @param queue [String] The current queue.
     def call worker, msg, queue
       yield
-      @statsd.increment [worker.class.name, "success"].join(".")
+      @statsd.increment prefix(worker.class.name, "success")
     rescue => e
-      @statsd.increment [worker.class.name, "failure"].join(".")
+      @statsd.increment prefix(worker.class.name, "failure")
       raise e
+    ensure
+      @statsd.gauge 'enqueued', @sidekiq_stats.enqueued
+      @statsd.gauge 'processed', @sidekiq_stats.processed
+      @statsd.gauge 'failed', @sidekiq_stats.failed
+
+      queue_name = msg['queue']
+      sidekiq_queue = Sidekiq::Queue.new(queue_name)
+      @statsd.gauge prefix(queue_name, 'enqueued'), sidekiq_queue.size
+      @statsd.gauge prefix(queue_name, 'latency'), sidekiq_queue.latency
     end
+
+    private
+
+    def prefix(*args)
+      args.compact.join('.')
+    end
+
   end # ServerMiddleware
 end # Sidekiq
 
