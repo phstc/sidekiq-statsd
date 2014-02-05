@@ -30,6 +30,10 @@ module Sidekiq::Statsd
     def increment key
       @statsd_client.increment [@options[:env], @options[:prefix], key].join(".")
     end
+
+    def gauge key, value
+      @statsd_client.gauge [@options[:env], @options[:prefix], key].join("."), value
+    end
   end
 end
 

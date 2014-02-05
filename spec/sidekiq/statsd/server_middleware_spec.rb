@@ -4,11 +4,12 @@ describe Sidekiq::Statsd::ServerMiddleware do
   subject(:statsd) { described_class.new }
 
   let(:worker) { double "Dummy worker" }
-  let(:msg)    { nil }
+  let(:msg)    { {} }
   let(:queue)  { nil }
   let(:client) { double "Statsd client" }
 
   before do
+    client.stub gauge: true
     Sidekiq::Statsd::Client.stub new: client
   end
 
