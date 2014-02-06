@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "activesupport"
   gem.add_dependency "sidekiq", ">= 2.5", "< 3.0"
-  gem.add_dependency "statsd-ruby"
+  gem.add_dependency "statsd-ruby", ">= 1.1.0"
 
   gem.add_development_dependency "rake"
   gem.add_development_dependency "pry"
