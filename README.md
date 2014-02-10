@@ -34,7 +34,11 @@ Sidekiq.configure_server do |config|
     chain.add Sidekiq::Statsd::ServerMiddleware, env: "production", prefix: "worker", host: "localhost", port: 8125
   end
 end
+```
 
+### Sidekiq::Statsd::ServerMiddleware options
+
+```ruby
 # @param [Hash] options The options to initialize the StatsD client.
 # @option options [Statsd] :statsd Existing statsd client to use.
 # @option options [String] :env ("production") The env to segment the metric key (e.g. env.prefix.worker_name.success|failure).
@@ -42,6 +46,8 @@ end
 # @option options [String] :host ("localhost") The StatsD host.
 # @option options [String] :port ("8125") The StatsD port.
 ```
+
+If you have a [statsd instance](https://github.com/github/statsd-ruby) you can pass it through the `:statsd` option. If not you can pass the `:host` and `:port` to connect to statsd.
 
 ## Contributing
 
