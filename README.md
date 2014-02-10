@@ -36,6 +36,7 @@ Sidekiq.configure_server do |config|
 end
 
 # @param [Hash] options The options to initialize the StatsD client.
+# @option options [Statsd] :statsd Existing statsd client to use.
 # @option options [String] :env ("production") The env to segment the metric key (e.g. env.prefix.worker_name.success|failure).
 # @option options [String] :prefix ("worker") The prefix to segment the metric key (e.g. env.prefix.worker_name.success|failure).
 # @option options [String] :host ("localhost") The StatsD host.
