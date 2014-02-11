@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Sidekiq::Statsd::VERSION
   gem.authors       = ["Pablo Cantero"]
   gem.email         = ["pablo@pablocantero.com"]
-  gem.description   = %q{Sidekiq StatsD is a middleware to increment your worker executions counter (success and failures).}
-  gem.summary       = %q{Sidekiq StatsD is a middleware to increment your worker executions counter (success and failures).}
+  gem.description   = %q{Sidekiq StatsD is a Sidekiq server middleware to send Sidekiq worker metrics through statsd.}
+  gem.summary       = %q{Sidekiq StatsD is a Sidekiq server middleware to send Sidekiq worker metrics through statsd.}
   gem.homepage      = "https://github.com/phstc/sidekiq-statsd"
 
   gem.files         = `git ls-files`.split($/)
