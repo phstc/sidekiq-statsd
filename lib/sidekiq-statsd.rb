@@ -1,4 +1,5 @@
 require "sidekiq"
+require "sidekiq/api"
 require "active_support"
 require "active_support/core_ext"
 
