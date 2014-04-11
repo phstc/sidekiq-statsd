@@ -18,6 +18,6 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency "activesupport"
-  gem.add_dependency "sidekiq", ">= 2.5"
+  gem.add_dependency "sidekiq", ">= 2.6"
   gem.add_dependency "statsd-ruby", ">= 1.1.0"
 end

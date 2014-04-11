@@ -54,7 +54,9 @@ module Sidekiq::Statsd
           queue_name = msg['queue']
           sidekiq_queue = Sidekiq::Queue.new(queue_name)
           b.gauge prefix('queues', queue_name, 'enqueued'), sidekiq_queue.size
-          b.gauge prefix('queues', queue_name, 'latency'), sidekiq_queue.latency
+          if sidekiq_queue.respond_to?(:latency)
+            b.gauge prefix('queues', queue_name, 'latency'), sidekiq_queue.latency
+          end
         end
       end
     end
