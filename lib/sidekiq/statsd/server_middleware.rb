@@ -34,12 +34,13 @@ module Sidekiq::Statsd
     def call worker, msg, queue
       @statsd.batch do |b|
         begin
-          b.time prefix(worker.class.name, 'processing_time') do
+          worker_name = worker.class.name.gsub("::", ".")
+          b.time prefix(worker_name, 'processing_time') do
             yield
           end
-          b.increment prefix(worker.class.name, 'success')
+          b.increment prefix(worker_name, 'success')
         rescue => e
-          b.increment prefix(worker.class.name, 'failure')
+          b.increment prefix(worker_name, 'failure')
           raise e
         ensure
           # Queue sizes
