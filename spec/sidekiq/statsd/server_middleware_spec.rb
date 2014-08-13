@@ -8,6 +8,8 @@ describe Sidekiq::Statsd::ServerMiddleware do
   let(:queue)  { nil }
   let(:client) { double(::Statsd).as_null_object }
 
+  let(:worker_name) { worker.class.name.gsub("::", ".") }
+
   let(:clean_job)  { ->{} }
   let(:broken_job) { ->{ raise 'error' } }
 
@@ -37,7 +39,7 @@ describe Sidekiq::Statsd::ServerMiddleware do
       it "uses the custom metric name prefix options" do
         expect(client)
           .to receive(:time)
-          .with("development.application.sidekiq.#{worker.class.name}.processing_time", &clean_job)
+          .with("development.application.sidekiq.#{worker_name}.processing_time", &clean_job)
           .once
 
         described_class
@@ -54,7 +56,7 @@ describe Sidekiq::Statsd::ServerMiddleware do
       it "increments success counter" do
         expect(client)
           .to receive(:increment)
-          .with("production.worker.#{worker.class.name}.success")
+          .with("production.worker.#{worker_name}.success")
           .once
 
         middleware.call(worker, msg, queue, &job)
@@ -63,7 +65,7 @@ describe Sidekiq::Statsd::ServerMiddleware do
       it "times the process execution" do
         expect(client)
           .to receive(:time)
-          .with("production.worker.#{worker.class.name}.processing_time", &job)
+          .with("production.worker.#{worker_name}.processing_time", &job)
           .once
 
         middleware.call(worker, msg, queue, &job)
@@ -80,13 +82,13 @@ describe Sidekiq::Statsd::ServerMiddleware do
       before do
         allow(client)
           .to receive(:time)
-          .with("production.worker.#{worker.class.name}.processing_time", &job)
+          .with("production.worker.#{worker_name}.processing_time", &job)
       end
 
       it "increments failure counter" do
         expect(client)
           .to receive(:increment)
-          .with("production.worker.#{worker.class.name}.failure")
+          .with("production.worker.#{worker_name}.failure")
           .once
 
         expect{ middleware.call(worker, msg, queue, &job) }.to raise_error
