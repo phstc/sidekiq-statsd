@@ -34,10 +34,13 @@ module Sidekiq::Statsd
     def call worker, msg, queue
       @statsd.batch do |b|
         begin
-          worker_name = worker.class.name.gsub("::", ".")
+          # colon causes invalid metric names
+          worker_name = worker.class.name.gsub('::', '.')
+
           b.time prefix(worker_name, 'processing_time') do
             yield
           end
+
           b.increment prefix(worker_name, 'success')
         rescue => e
           b.increment prefix(worker_name, 'failure')
@@ -45,11 +48,14 @@ module Sidekiq::Statsd
         ensure
           # Queue sizes
           b.gauge prefix('enqueued'), @sidekiq_stats.enqueued
-          b.gauge prefix('retry_set_size'), @sidekiq_stats.retry_size
+          if @sidekiq_stats.respond_to?(:retry_size)
+            # 2.6.0 doesn't have `retry_size`
+            b.gauge prefix('retry_set_size'), @sidekiq_stats.retry_size
+          end
 
           # All-time counts
-          b.gauge prefix('processed'), @sidekiq_stats.processed
-          b.gauge prefix('failed'), @sidekiq_stats.failed
+          b.gauge prefix('processed'),  @sidekiq_stats.processed
+          b.gauge prefix('failed'),     @sidekiq_stats.failed
 
           # Queue metrics
           queue_name = msg['queue']
