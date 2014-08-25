@@ -17,10 +17,11 @@ module Sidekiq::Statsd
     # @option options [String] :host ("localhost") The StatsD host.
     # @option options [String] :port ("8125") The StatsD port.
     def initialize options={}
-      @options = { env:    "production",
-                   prefix: "worker",
-                   host:   "localhost",
-                   port:   8125 }.merge options
+      @options = { env:             "production",
+                   prefix:          "worker",
+                   host:            "localhost",
+                   port:            8125,
+                   sidekiq_stats:   true }.merge options
       @statsd = options[:statsd] || ::Statsd.new(@options[:host], @options[:port])
       @sidekiq_stats = Sidekiq::Stats.new
     end
@@ -46,16 +47,18 @@ module Sidekiq::Statsd
           b.increment prefix(worker_name, 'failure')
           raise e
         ensure
-          # Queue sizes
-          b.gauge prefix('enqueued'), @sidekiq_stats.enqueued
-          if @sidekiq_stats.respond_to?(:retry_size)
-            # 2.6.0 doesn't have `retry_size`
-            b.gauge prefix('retry_set_size'), @sidekiq_stats.retry_size
-          end
+          if @options[:sidekiq_stats]
+            # Queue sizes
+            b.gauge prefix('enqueued'), @sidekiq_stats.enqueued
+            if @sidekiq_stats.respond_to?(:retry_size)
+              # 2.6.0 doesn't have `retry_size`
+              b.gauge prefix('retry_set_size'), @sidekiq_stats.retry_size
+            end
 
-          # All-time counts
-          b.gauge prefix('processed'),  @sidekiq_stats.processed
-          b.gauge prefix('failed'),     @sidekiq_stats.failed
+            # All-time counts
+            b.gauge prefix('processed'),  @sidekiq_stats.processed
+            b.gauge prefix('failed'),     @sidekiq_stats.failed
+          end
 
           # Queue metrics
           queue_name = msg['queue']

@@ -49,6 +49,23 @@ describe Sidekiq::Statsd::ServerMiddleware do
     end
   end
 
+  context 'without global sidekiq stats' do
+    let(:sidekiq_stats) { double }
+
+    it "doesn't gauge sidekiq stats" do
+      Sidekiq::Stats.stub(:new).and_return(sidekiq_stats)
+
+      expect(sidekiq_stats).not_to receive(:enqueued)
+      expect(sidekiq_stats).not_to receive(:retry_size)
+      expect(sidekiq_stats).not_to receive(:processed)
+      expect(sidekiq_stats).not_to receive(:failed)
+
+      described_class
+        .new(sidekiq_stats: false)
+        .call(worker, msg, queue, &clean_job)
+    end
+  end
+
   context "with successful execution" do
     let(:job) { clean_job }
 
