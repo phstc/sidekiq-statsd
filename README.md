@@ -45,6 +45,7 @@ end
 # @option options [String] :prefix ("worker") The prefix to segment the metric key (e.g. env.prefix.worker_name.success|failure).
 # @option options [String] :host ("localhost") The StatsD host.
 # @option options [String] :port ("8125") The StatsD port.
+# @option options [String] :sidekiq_stats ("true") Send Sidekiq global stats e.g. total enqueued, processed and failed.
 ```
 
 If you have a [statsd instance](https://github.com/github/statsd-ruby) you can pass it through the `:statsd` option. If not you can pass the `:host` and `:port` to connect to statsd.
