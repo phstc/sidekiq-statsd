@@ -16,12 +16,14 @@ module Sidekiq::Statsd
     # @option options [String] :prefix ("worker") The prefix to segment the metric key (e.g. env.prefix.worker_name.success|failure).
     # @option options [String] :host ("localhost") The StatsD host.
     # @option options [String] :port ("8125") The StatsD port.
-    def initialize options={}
-      @options = { env:             "production",
-                   prefix:          "worker",
-                   host:            "localhost",
-                   port:            8125,
-                   sidekiq_stats:   true }.merge options
+    # @option options [String] :sidekiq_stats ("true") Send Sidekiq global stats e.g. total enqueued, processed and failed.
+    def initialize(options = {})
+      @options = { env:            'production',
+                   prefix:         'worker',
+                   host:           'localhost',
+                   port:           8125,
+                   sidekiq_stats:  true }.merge options
+
       @statsd = options[:statsd] || ::Statsd.new(@options[:host], @options[:port])
       @sidekiq_stats = Sidekiq::Stats.new
     end
