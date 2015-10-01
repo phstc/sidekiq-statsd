@@ -25,7 +25,7 @@ module Sidekiq::Statsd
                    sidekiq_stats:  true }.merge options
 
       @statsd = options[:statsd] || ::Statsd.new(@options[:host], @options[:port])
-      @sidekiq_stats = Sidekiq::Stats.new
+      @sidekiq_stats = Sidekiq::Stats.new if @options[:sidekiq_stats]
     end
 
     ##
