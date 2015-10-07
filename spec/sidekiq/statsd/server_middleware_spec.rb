@@ -52,6 +52,12 @@ describe Sidekiq::Statsd::ServerMiddleware do
   context 'without global sidekiq stats' do
     let(:sidekiq_stats) { double }
 
+    it "doesn't initialze a Sidekiq::Stats instance" do
+      # Sidekiq::Stats.new calls fetch_stats!, which makes redis calls
+      expect(described_class.new(sidekiq_stats: false).instance_variable_get(:@sidekiq_stats))
+        .to be_nil
+    end
+
     it "doesn't gauge sidekiq stats" do
       Sidekiq::Stats.stub(:new).and_return(sidekiq_stats)
 
