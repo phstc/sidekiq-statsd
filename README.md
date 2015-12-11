@@ -11,8 +11,9 @@ Sidekiq::Statsd is tested against MRI 1.9.3.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add these lines to your application's Gemfile:
 
+    gem "statsd-ruby"
     gem "sidekiq-statsd"
 
 And then execute:
