@@ -69,6 +69,10 @@ module Sidekiq::Statsd
           if sidekiq_queue.respond_to?(:latency)
             b.gauge prefix('queues', queue_name, 'latency'), sidekiq_queue.latency
           end
+
+          scheduled_set = Sidekiq::ScheduledSet.new
+          scheduled_jobs = scheduled_set.select { |job| job.queue == queue_name }
+          b.gauge prefix('queues', queue_name, 'scheduled'), scheduled_jobs.size
         end
       end
     end
