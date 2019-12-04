@@ -7,7 +7,7 @@ Sidekiq StatsD is a [Sidekiq server middleware](https://github.com/mperham/sidek
 
 ## Compatibility
 
-Sidekiq::Statsd is tested against MRI 1.9.3.
+Sidekiq::Statsd is tested against [several Ruby versions](.travis.yml#L4).
 
 ## Installation
 
@@ -60,4 +60,4 @@ If you have a [statsd instance](https://github.com/github/statsd-ruby) you can p
 
 ## License
 
-MIT Licensed. See LICENSE.txt for details.
+MIT Licensed. See [LICENSE](LICENSE) for details.
