@@ -14,7 +14,7 @@ describe Sidekiq::Statsd::ServerMiddleware do
   let(:broken_job) { ->{ raise 'error' } }
 
   before do
-    ::Statsd.stub_chain(:new, :batch).and_yield(client)
+    allow_any_instance_of(::Statsd).to receive(:batch).and_yield(client)
   end
 
   it "doesn't initialize a ::Statsd client if passed-in" do
@@ -39,8 +39,9 @@ describe Sidekiq::Statsd::ServerMiddleware do
       it "uses the custom metric name prefix options" do
         expect(client)
           .to receive(:time)
-          .with("development.application.sidekiq.#{worker_name}.processing_time", &clean_job)
+          .with("development.application.sidekiq.#{worker_name}.processing_time")
           .once
+          .and_yield
 
         described_class
           .new(env: 'development', prefix: 'application.sidekiq')
@@ -59,7 +60,7 @@ describe Sidekiq::Statsd::ServerMiddleware do
     end
 
     it "doesn't gauge sidekiq stats" do
-      Sidekiq::Stats.stub(:new).and_return(sidekiq_stats)
+      allow(Sidekiq::Stats).to receive(:new) { sidekiq_stats }
 
       expect(sidekiq_stats).not_to receive(:enqueued)
       expect(sidekiq_stats).not_to receive(:retry_size)
@@ -88,8 +89,9 @@ describe Sidekiq::Statsd::ServerMiddleware do
       it "times the process execution" do
         expect(client)
           .to receive(:time)
-          .with("production.worker.#{worker_name}.processing_time", &job)
+          .with("production.worker.#{worker_name}.processing_time")
           .once
+          .and_yield
 
         middleware.call(worker, msg, queue, &job)
       end
@@ -105,7 +107,8 @@ describe Sidekiq::Statsd::ServerMiddleware do
       before do
         allow(client)
           .to receive(:time)
-          .with("production.worker.#{worker_name}.processing_time", &job)
+          .with("production.worker.#{worker_name}.processing_time")
+          .and_yield
       end
 
       it "increments failure counter" do
@@ -114,7 +117,7 @@ describe Sidekiq::Statsd::ServerMiddleware do
           .with("production.worker.#{worker_name}.failure")
           .once
 
-        expect{ middleware.call(worker, msg, queue, &job) }.to raise_error
+        expect{ middleware.call(worker, msg, queue, &job) }.to raise_error('error')
       end
     end
 

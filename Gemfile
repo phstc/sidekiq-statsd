@@ -9,7 +9,7 @@ group :development do
   gem  'yard'
   gem  'redcarpet', platforms: [:ruby]
 
-  gem  'rspec', '~> 2.14.1'
+  gem  'rspec'
   gem  'rspec-redis_helper'
   gem  'timecop'
   gem  'simplecov'
