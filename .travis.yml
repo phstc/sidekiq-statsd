@@ -7,9 +7,11 @@ rvm:
   - 2.6.0
 env:
   matrix:
-    - SIDEKIQ_VERSION="~> 2.6.0"
-    - SIDEKIQ_VERSION="~> 2.17.0"
+    - SIDEKIQ_VERSION="~> 2.7.0"
     - SIDEKIQ_VERSION="~> 3.0.0"
+    - SIDEKIQ_VERSION="~> 4.0.0"
+    - SIDEKIQ_VERSION="~> 5.0.0"
+    - SIDEKIQ_VERSION="~> 6.0.0"
 branches:
   only:
     - master
