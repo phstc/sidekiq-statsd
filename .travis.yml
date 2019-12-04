@@ -6,12 +6,16 @@ rvm:
   - 2.5.0
   - 2.6.0
 env:
-  matrix:
-    - SIDEKIQ_VERSION="~> 2.7.0"
-    - SIDEKIQ_VERSION="~> 3.0.0"
-    - SIDEKIQ_VERSION="~> 4.0.0"
-    - SIDEKIQ_VERSION="~> 5.0.0"
-    - SIDEKIQ_VERSION="~> 6.0.0"
+  - SIDEKIQ_VERSION="~> 2.7.0"
+  - SIDEKIQ_VERSION="~> 3.0.0"
+  - SIDEKIQ_VERSION="~> 4.0.0"
+  - SIDEKIQ_VERSION="~> 5.0.0"
+  - SIDEKIQ_VERSION="~> 6.0.0"
+jobs:
+  exclude:
+      # Sidekiq 6 requires Ruby 2.5+
+    - rvm: 2.4.0
+      env: SIDEKIQ_VERSION="~> 6.0.0"
 branches:
   only:
     - master
