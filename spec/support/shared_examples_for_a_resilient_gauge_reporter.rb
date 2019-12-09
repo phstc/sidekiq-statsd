@@ -3,8 +3,8 @@ shared_examples "a resilient gauge reporter" do
   let(:queue_stats)   { double(size: 3, latency: 4.2) }
 
   before do
-    Sidekiq::Stats.stub(:new).and_return(sidekiq_stats)
-    Sidekiq::Queue.stub(:new).with('mailer').and_return(queue_stats)
+    allow(Sidekiq::Stats).to receive(:new) { sidekiq_stats }
+    allow(Sidekiq::Queue).to receive(:new).with('mailer') { queue_stats }
   end
 
   it "gauges enqueued jobs" do

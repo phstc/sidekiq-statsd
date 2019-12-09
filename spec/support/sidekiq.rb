@@ -1,11 +1,4 @@
-require "sidekiq/util"
-Sidekiq.logger.level = Logger::ERROR
-
 require "rspec-redis_helper"
-RSpec::RedisHelper::CONFIG = { :url => "redis://localhost/15", :namespace => "testy" }
-
-require "sidekiq/redis_connection"
-REDIS = Sidekiq::RedisConnection.create(RSpec::RedisHelper::CONFIG)
 
 RSpec.configure do |spec|
   spec.include RSpec::RedisHelper, redis: true
