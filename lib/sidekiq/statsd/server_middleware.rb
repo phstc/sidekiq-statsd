@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-require 'statsd'
-
 module Sidekiq::Statsd
   ##
   # Sidekiq StatsD is a middleware to track worker execution metrics through statsd.
@@ -24,7 +22,7 @@ module Sidekiq::Statsd
                    port:           8125,
                    sidekiq_stats:  true }.merge options
 
-      @statsd = options[:statsd] || ::Statsd.new(@options[:host], @options[:port])
+      @statsd = options[:statsd] || initialize_statsd
       @sidekiq_stats = Sidekiq::Stats.new if @options[:sidekiq_stats]
     end
 
@@ -74,6 +72,16 @@ module Sidekiq::Statsd
     end
 
     private
+
+    def initialize_statsd
+      begin
+        require 'statsd'
+      rescue LoadError
+        fail "Please add gem 'statsd-ruby' to your Gemfile"
+      end
+
+      ::Statsd.new(@options[:host], @options[:port])
+    end
 
     ##
     # Converts args passed to it into a metric name with prefix.

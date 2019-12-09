@@ -11,8 +11,9 @@ Sidekiq::Statsd is tested against [several Ruby versions](.travis.yml#L4).
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add these lines to your application's Gemfile:
 
+    gem "statsd-ruby" # or dogstatsd-ruby for Datadog
     gem "sidekiq-statsd"
 
 And then execute:
