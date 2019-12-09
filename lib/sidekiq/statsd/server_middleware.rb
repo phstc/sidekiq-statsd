@@ -9,11 +9,9 @@ module Sidekiq::Statsd
     # Initializes the middleware with options.
     #
     # @param [Hash] options The options to initialize the StatsD client.
-    # @option options [Statsd] :statsd Existing statsd client.
+    # @option options [Statsd] :statsd Existing StatsD client.
     # @option options [String] :env ("production") The env to segment the metric key (e.g. env.prefix.worker_name.success|failure).
     # @option options [String] :prefix ("worker") The prefix to segment the metric key (e.g. env.prefix.worker_name.success|failure).
-    # @option options [String] :host ("localhost") The StatsD host.
-    # @option options [String] :port ("8125") The StatsD port.
     # @option options [String] :sidekiq_stats ("true") Send Sidekiq global stats e.g. total enqueued, processed and failed.
     def initialize(options = {})
       @options = { env:            'production',
@@ -22,7 +20,7 @@ module Sidekiq::Statsd
                    port:           8125,
                    sidekiq_stats:  true }.merge options
 
-      @statsd = options[:statsd] || initialize_statsd
+      @statsd = options[:statsd] || raise("A StatsD client must be provided")
       @sidekiq_stats = Sidekiq::Stats.new if @options[:sidekiq_stats]
     end
 
@@ -72,16 +70,6 @@ module Sidekiq::Statsd
     end
 
     private
-
-    def initialize_statsd
-      begin
-        require 'statsd'
-      rescue LoadError
-        fail "Please add gem 'statsd-ruby' to your Gemfile"
-      end
-
-      ::Statsd.new(@options[:host], @options[:port])
-    end
 
     ##
     # Converts args passed to it into a metric name with prefix.

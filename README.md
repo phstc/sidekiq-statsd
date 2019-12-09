@@ -13,7 +13,9 @@ Sidekiq::Statsd is tested against [several Ruby versions](.travis.yml#L4).
 
 Add these lines to your application's Gemfile:
 
-    gem "statsd-ruby" # or dogstatsd-ruby for Datadog
+    gem "statsd-ruby"
+    # or if you are using Datadog
+    # gem "dogstatsd-ruby"
     gem "sidekiq-statsd"
 
 And then execute:
@@ -30,14 +32,16 @@ In a Rails initializer or wherever you've configured Sidekiq, add
 Sidekiq::Statsd to your server middleware:
 
 ```ruby
+require 'statsd'
+statsd = Statsd.new('localhost', 8125)
+
+# or if you are using Datadog
+# require 'datadog/statsd'
+# statsd = Datadog::Statsd.new('localhost', 8125)
+
 Sidekiq.configure_server do |config|
   config.server_middleware do |chain|
-    chain.add Sidekiq::Statsd::ServerMiddleware, env: "production", prefix: "worker", host: "localhost", port: 8125
-
-    # or if you use Datadog
-    # require 'datadog/statsd'
-    # statsd = Datadog::Statsd.new('localhost', 8125)
-    # chain.add Sidekiq::Statsd::ServerMiddleware, env: "production", prefix: "worker", statsd: statsd
+    chain.add Sidekiq::Statsd::ServerMiddleware, env: "production", prefix: "worker", statsd: statsd
   end
 end
 ```
