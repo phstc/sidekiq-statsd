@@ -18,5 +18,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency "activesupport"
-  gem.add_dependency "sidekiq", ">= 2.6"
+  gem.add_dependency "sidekiq", ">= 2.7"
+
+  gem.required_ruby_version = '>= 2.4.0'
 end
