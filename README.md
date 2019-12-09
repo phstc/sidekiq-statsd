@@ -33,6 +33,11 @@ Sidekiq::Statsd to your server middleware:
 Sidekiq.configure_server do |config|
   config.server_middleware do |chain|
     chain.add Sidekiq::Statsd::ServerMiddleware, env: "production", prefix: "worker", host: "localhost", port: 8125
+
+    # or if you use Datadog
+    # require 'datadog/statsd'
+    # statsd = Datadog::Statsd.new('localhost', 8125)
+    # chain.add Sidekiq::Statsd::ServerMiddleware, env: "production", prefix: "worker", statsd: statsd
   end
 end
 ```
