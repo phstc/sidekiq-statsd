@@ -14,11 +14,7 @@ module Sidekiq::Statsd
     # @option options [String] :prefix ("worker") The prefix to segment the metric key (e.g. env.prefix.worker_name.success|failure).
     # @option options [String] :sidekiq_stats ("true") Send Sidekiq global stats e.g. total enqueued, processed and failed.
     def initialize(options = {})
-      @options = { env:            'production',
-                   prefix:         'worker',
-                   host:           'localhost',
-                   port:           8125,
-                   sidekiq_stats:  true }.merge options
+      @options = { env: 'production', prefix: 'worker', sidekiq_stats:  true }.merge options
 
       @statsd = options[:statsd] || raise("A StatsD client must be provided")
       @sidekiq_stats = Sidekiq::Stats.new if @options[:sidekiq_stats]
