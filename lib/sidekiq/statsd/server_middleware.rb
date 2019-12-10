@@ -17,7 +17,6 @@ module Sidekiq::Statsd
       @options = { env: 'production', prefix: 'worker', sidekiq_stats:  true }.merge options
 
       @statsd = options[:statsd] || raise("A StatsD client must be provided")
-      @sidekiq_stats = Sidekiq::Stats.new if @options[:sidekiq_stats]
     end
 
     ##
@@ -42,16 +41,15 @@ module Sidekiq::Statsd
           raise e
         ensure
           if @options[:sidekiq_stats]
+            sidekiq_stats = Sidekiq::Stats.new
+
             # Queue sizes
-            b.gauge prefix('enqueued'), @sidekiq_stats.enqueued
-            if @sidekiq_stats.respond_to?(:retry_size)
-              # 2.6.0 doesn't have `retry_size`
-              b.gauge prefix('retry_set_size'), @sidekiq_stats.retry_size
-            end
+            b.gauge prefix('enqueued'), sidekiq_stats.enqueued
+            b.gauge prefix('retry_set_size'), sidekiq_stats.retry_size
 
             # All-time counts
-            b.gauge prefix('processed'),  @sidekiq_stats.processed
-            b.gauge prefix('failed'),     @sidekiq_stats.failed
+            b.gauge prefix('processed'), sidekiq_stats.processed
+            b.gauge prefix('failed'), sidekiq_stats.failed
           end
 
           # Queue metrics
