@@ -6,8 +6,7 @@ rvm:
   - 2.5.0
   - 2.6.0
 env:
-  - SIDEKIQ_VERSION="~> 2.7.0"
-  - SIDEKIQ_VERSION="~> 3.0.0"
+  - SIDEKIQ_VERSION="~> 3.3.1"
   - SIDEKIQ_VERSION="~> 4.0.0"
   - SIDEKIQ_VERSION="~> 5.0.0"
   - SIDEKIQ_VERSION="~> 6.0.0"

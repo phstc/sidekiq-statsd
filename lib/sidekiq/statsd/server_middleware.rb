@@ -17,7 +17,6 @@ module Sidekiq::Statsd
       @options = { env: 'production', prefix: 'worker', sidekiq_stats:  true }.merge options
 
       @statsd = options[:statsd] || raise("A StatsD client must be provided")
-      @sidekiq_stats = Sidekiq::Stats.new if @options[:sidekiq_stats]
     end
 
     ##
@@ -41,31 +40,34 @@ module Sidekiq::Statsd
           b.increment prefix(worker_name, 'failure')
           raise e
         ensure
-          if @options[:sidekiq_stats]
-            # Queue sizes
-            b.gauge prefix('enqueued'), @sidekiq_stats.enqueued
-            if @sidekiq_stats.respond_to?(:retry_size)
-              # 2.6.0 doesn't have `retry_size`
-              b.gauge prefix('retry_set_size'), @sidekiq_stats.retry_size
-            end
-
-            # All-time counts
-            b.gauge prefix('processed'),  @sidekiq_stats.processed
-            b.gauge prefix('failed'),     @sidekiq_stats.failed
-          end
-
-          # Queue metrics
-          queue_name = msg['queue']
-          sidekiq_queue = Sidekiq::Queue.new(queue_name)
-          b.gauge prefix('queues', queue_name, 'enqueued'), sidekiq_queue.size
-          if sidekiq_queue.respond_to?(:latency)
-            b.gauge prefix('queues', queue_name, 'latency'), sidekiq_queue.latency
-          end
+          report_global_stats(b) if @options[:sidekiq_stats]
+          report_queue_stats(b, msg['queue'])
         end
       end
     end
 
     private
+
+    def report_global_stats(statsd)
+      sidekiq_stats = Sidekiq::Stats.new
+
+      # Queue sizes
+      statsd.gauge prefix('enqueued'), sidekiq_stats.enqueued
+      statsd.gauge prefix('retry_set_size'), sidekiq_stats.retry_size
+
+      # All-time counts
+      statsd.gauge prefix('processed'), sidekiq_stats.processed
+      statsd.gauge prefix('failed'), sidekiq_stats.failed
+    end
+
+    def report_queue_stats(statsd, queue_name)
+      sidekiq_queue = Sidekiq::Queue.new(queue_name)
+      statsd.gauge prefix('queues', queue_name, 'enqueued'), sidekiq_queue.size
+
+      if sidekiq_queue.respond_to?(:latency)
+        statsd.gauge prefix('queues', queue_name, 'latency'), sidekiq_queue.latency
+      end
+    end
 
     ##
     # Converts args passed to it into a metric name with prefix.
