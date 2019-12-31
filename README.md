@@ -3,7 +3,12 @@
 [![Build Status](https://secure.travis-ci.org/phstc/sidekiq-statsd.png)](http://travis-ci.org/phstc/sidekiq-statsd)
 [![Dependency Status](https://gemnasium.com/phstc/sidekiq-statsd.png)](https://gemnasium.com/phstc/sidekiq-statsd)
 
-Sidekiq StatsD is a [Sidekiq server middleware](https://github.com/mperham/sidekiq/wiki/Middleware) to send [Sidekiq worker metrics](https://github.com/mperham/sidekiq/wiki/API#wiki-stats) through [statsd](https://github.com/reinh/statsd).
+Sidekiq StatsD is a [Sidekiq server middleware](https://github.com/mperham/sidekiq/wiki/Middleware) to send Sidekiq metrics through [statsd](https://github.com/reinh/statsd):
+
+  - [global metrics](https://github.com/mperham/sidekiq/wiki/API#wiki-stats)
+  - [queue metrics](https://github.com/mperham/sidekiq/wiki/API#queue)
+  - [worker metrics](https://github.com/mperham/sidekiq/wiki/API#workers) (`processing`, `runtime`)
+  - job metrics (`processing_time` and `success` / `failure`)
 
 ## Compatibility
 

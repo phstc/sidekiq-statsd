@@ -41,6 +41,7 @@ module Sidekiq::Statsd
           raise e
         ensure
           report_global_stats(b) if @options[:sidekiq_stats]
+          report_worker_stats(b) if @options[:sidekiq_stats]
           report_queue_stats(b, msg['queue'])
         end
       end
@@ -64,6 +65,20 @@ module Sidekiq::Statsd
       sidekiq_queue = Sidekiq::Queue.new(queue_name)
       statsd.gauge prefix('queues', queue_name, 'enqueued'), sidekiq_queue.size
       statsd.gauge prefix('queues', queue_name, 'latency'), sidekiq_queue.latency
+    end
+
+    def report_worker_stats(statsd)
+      workers = Sidekiq::Workers.new.to_a.map { |_pid, _tid, work| work }
+      worker_groups = workers.group_by { |worker| worker['queue'] }
+
+      workers.each do |worker|
+        runtime = Time.now.to_i - worker['run_at']
+        statsd.gauge prefix('queues', worker['queue'], 'runtime'), runtime
+      end
+
+      worker_groups.each do |queue_name, workers|
+        statsd.gauge prefix('queues', queue_name, 'processing'), workers.size
+      end
     end
 
     ##
