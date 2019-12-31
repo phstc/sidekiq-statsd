@@ -49,17 +49,6 @@ describe Sidekiq::Statsd::ServerMiddleware do
       expect(Sidekiq::Workers).not_to receive(:new)
       described_class.new(statsd: client, sidekiq_stats: false)
     end
-
-    it "doesn't gauge sidekiq stats" do
-      expect(client).not_to receive(:enqueued)
-      expect(client).not_to receive(:retry_size)
-      expect(client).not_to receive(:processed)
-      expect(client).not_to receive(:failed)
-
-      described_class
-        .new(statsd: client, sidekiq_stats: false)
-        .call(worker, msg, queue, &clean_job)
-    end
   end
 
   context "with successful execution" do
