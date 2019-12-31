@@ -63,10 +63,7 @@ module Sidekiq::Statsd
     def report_queue_stats(statsd, queue_name)
       sidekiq_queue = Sidekiq::Queue.new(queue_name)
       statsd.gauge prefix('queues', queue_name, 'enqueued'), sidekiq_queue.size
-
-      if sidekiq_queue.respond_to?(:latency)
-        statsd.gauge prefix('queues', queue_name, 'latency'), sidekiq_queue.latency
-      end
+      statsd.gauge prefix('queues', queue_name, 'latency'), sidekiq_queue.latency
     end
 
     ##
@@ -78,3 +75,4 @@ module Sidekiq::Statsd
     end
   end # ServerMiddleware
 end # Sidekiq
+
