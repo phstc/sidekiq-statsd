@@ -1,3 +1,7 @@
+# 2.1.0
+
+* Report stats across all workers (processing, runtime)
+
 # 2.0.1
 
 * Fix stuck global stats (retries, processed, etc.)

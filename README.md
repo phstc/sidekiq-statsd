@@ -3,7 +3,12 @@
 [![Build Status](https://secure.travis-ci.org/phstc/sidekiq-statsd.png)](http://travis-ci.org/phstc/sidekiq-statsd)
 [![Dependency Status](https://gemnasium.com/phstc/sidekiq-statsd.png)](https://gemnasium.com/phstc/sidekiq-statsd)
 
-Sidekiq StatsD is a [Sidekiq server middleware](https://github.com/mperham/sidekiq/wiki/Middleware) to send [Sidekiq worker metrics](https://github.com/mperham/sidekiq/wiki/API#wiki-stats) through [statsd](https://github.com/reinh/statsd).
+Sidekiq StatsD is a [Sidekiq server middleware](https://github.com/mperham/sidekiq/wiki/Middleware) to send Sidekiq metrics through [statsd](https://github.com/reinh/statsd):
+
+  - [global metrics](https://github.com/mperham/sidekiq/wiki/API#wiki-stats)
+  - [queue metrics](https://github.com/mperham/sidekiq/wiki/API#queue)
+  - [worker metrics](https://github.com/mperham/sidekiq/wiki/API#workers) (`processing`, `runtime`)
+  - job metrics (`processing_time` and `success` / `failure`)
 
 ## Compatibility
 
@@ -50,15 +55,11 @@ end
 
 ```ruby
 # @param [Hash] options The options to initialize the StatsD client.
-# @option options [Statsd] :statsd Existing statsd client to use.
+# @option options [Statsd] :statsd Existing [statsd client](https://github.com/github/statsd-ruby) to use.
 # @option options [String] :env ("production") The env to segment the metric key (e.g. env.prefix.worker_name.success|failure).
 # @option options [String] :prefix ("worker") The prefix to segment the metric key (e.g. env.prefix.worker_name.success|failure).
-# @option options [String] :host ("localhost") The StatsD host.
-# @option options [String] :port ("8125") The StatsD port.
 # @option options [String] :sidekiq_stats ("true") Send Sidekiq global stats e.g. total enqueued, processed and failed.
 ```
-
-If you have a [statsd instance](https://github.com/github/statsd-ruby) you can pass it through the `:statsd` option. If not you can pass the `:host` and `:port` to connect to statsd.
 
 ## Contributing
 
