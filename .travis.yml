@@ -18,7 +18,4 @@ jobs:
 branches:
   only:
     - master
-notifications:
-  email:
-    recipients:
-      - pablo@pablocantero.com
+
